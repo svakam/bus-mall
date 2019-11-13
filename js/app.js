@@ -1,7 +1,7 @@
 'use strict';
 
-// Week 3 Day 1: 
-/* 
+// Week 3 Day 1:
+/*
 - constructor function for objects (name, path) :)
 - algorithm to random generate 3 unique products from img directory :)
 - upon click, generate three new products to pick from
