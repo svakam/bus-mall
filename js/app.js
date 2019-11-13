@@ -1,20 +1,12 @@
 'use strict';
 
-// Week 3 Day 1:
-/*
-- constructor function for objects (name, path) :)
-- algorithm to random generate 3 unique products from img directory :)
-- upon click, generate three new products to pick from
-in constructor, define property to hold number of times product been clicked and update when clicked :)
-- control 25 rounds of clicking, stop clicking ability after 25 :)
-- view report of results of each image's clicks + views :) 
-*/
-
-// global array for inserted products to choose from
-var displayArray = [];
-
 var productsConsidered = [];
-
+var productStorage = [];
+var totalClicks = 0;
+const MAX_CLICKS = 25;
+var displayArray = [];
+var storageIndex;
+const MAX_DISPLAY_LENGTH = 3;
 
 // constructor for products
 function Product(name, path) {
@@ -29,20 +21,16 @@ function Product(name, path) {
   // increment clicked vs. viewed products
   this.productClicks = function () {
     this.clicked++;
-  }
+  };
   this.productViews = function () {
     this.viewed++;
-  }
+  };
 
   // keep track of considered products in an array
   this.addToConsidered = function () {
     productsConsidered.push(this);
-  }
+  };
 }
-
-
-// empty array for storing products
-var productStorage = [];
 
 // declaration of products
 var Bag = new Product('Bag', './img/bag.jpg');
@@ -66,43 +54,79 @@ var Usb = new Product('Usb', './img/usb.gif');
 var WaterCan = new Product('Water Can', './img/water-can.jpg');
 var WineGlass = new Product('Wine Glass', './img/wine-glass.jpg');
 
-// obtain 3 products and render them to HTML
-function get3RandomProductsAndRender() {
+// random product generator
+var randomProduct = function () {
+  return Math.floor(Math.random() * productStorage.length);
+};
 
-  // set/reset temp array to empty
-  displayArray = [];
-
-  // push 3 products at random into temporary array 3 times
-  while (displayArray.length < 3) {
-
-    // index of product array, returns random 0-19
-    var storageIndex = Math.floor(Math.random() * productStorage.length);
-
-    // make sure array to display images from doesn't contain newly inserted object 
-    if (!displayArray.includes(productStorage[storageIndex])) {
-      displayArray.push(productStorage[storageIndex]);
-    }
-  }
-
-  // display temporary array's object's 3 image paths in HTML
+// render 3 images in HTML
+function productView() {
   var placeholder0 = document.getElementById('choice-0');
   var placeholder1 = document.getElementById('choice-1');
   var placeholder2 = document.getElementById('choice-2');
-
-  function productViewCount() {
-    placeholder0.src = displayArray[0].path;
-    displayArray[0].productViews();
-    placeholder1.src = displayArray[1].path;
-    displayArray[1].productViews();
-    placeholder2.src = displayArray[2].path;
-    displayArray[2].productViews();
-  }
-  productViewCount();
+  placeholder0.src = displayArray[0].path;
+  placeholder1.src = displayArray[1].path;
+  placeholder2.src = displayArray[2].path;
+  displayArray[0].productViews();
+  displayArray[1].productViews();
+  displayArray[2].productViews();
 }
 
-get3RandomProductsAndRender();
+// obtain 3 products and render them to HTML
+function get3RandomProductsAndRender() {
 
-// render totals as unordered
+  // if display array full
+  if (displayArray.length !== 0) {
+
+    // copy display array into comparison array
+    var comparisonArray = [];
+
+    for (var displayIndex = 0; displayIndex < MAX_DISPLAY_LENGTH; displayIndex++) {
+      comparisonArray.push(displayArray[displayIndex]);
+    }
+
+    // clear current display array
+    displayArray = [];
+
+    // while display array length less than 3
+    while (displayArray.length < MAX_DISPLAY_LENGTH) {
+
+      // new index for random product
+      storageIndex = randomProduct();
+
+      // iterate over comparison array
+      for (var compareIndex = 0; compareIndex < MAX_DISPLAY_LENGTH; compareIndex++) {
+
+        // generate random product until unique product found
+        while (productStorage[storageIndex] === comparisonArray[compareIndex]) {
+          storageIndex = randomProduct();
+        }
+      }
+
+      // make sure array to display images from doesn't contain newly inserted object
+      if (!displayArray.includes(productStorage[storageIndex])) {
+        displayArray.push(productStorage[storageIndex]);
+      }
+    }
+  }
+
+  else { // if array not full (first time starting page), start fresh
+
+    // push 3 products at random into temporary array 3 times
+    while (displayArray.length < MAX_DISPLAY_LENGTH) {
+
+      storageIndex = randomProduct();
+
+      if (!displayArray.includes(productStorage[storageIndex])) {
+        displayArray.push(productStorage[storageIndex]);
+      }
+    }
+  }
+
+  productView();
+}
+
+// render totals as an unordered list
 function renderTotals(domReferenceResults, productsConsidered) {
   var headerList = document.createElement('h3');
   headerList.textContent = 'Results';
@@ -117,43 +141,34 @@ function renderTotals(domReferenceResults, productsConsidered) {
   }
 
   domReferenceResults.append(ul);
-
 }
-
-
-// global counter for max number of choices
-var totalClicks = 0;
-const MAX_CLICKS = 25;
 
 // upon clicking an image, increment clicks and add to considered list only for the clicked product, then reset with 3 new products
 function clickManager(event) {
   totalClicks++;
-  if (totalClicks < MAX_CLICKS) {
-    var displayArrayIndex;
+
+  if (totalClicks < MAX_CLICKS) { // check for 25 max choices
+    var displayIndex;
 
     if (event.target.id === 'choice-0') {
-      displayArrayIndex = 0;
+      displayIndex = 0;
     }
     else if (event.target.id === 'choice-1') {
-      displayArrayIndex = 1;
+      displayIndex = 1;
     }
     else if (event.target.id === 'choice-2') {
-      displayArrayIndex = 2;
+      displayIndex = 2;
     }
 
-    var product = displayArray[displayArrayIndex];
-    console.log(product);
+    var product = displayArray[displayIndex];
 
     if (product.clicked === 0) {
       product.addToConsidered();
-      console.log(productsConsidered);
     }
-    console.log(productStorage);
 
     product.productClicks();
-    console.log(product.clicked);
-
   }
+
   else {
     // stop clicking ability
     placeholder0.removeEventListener('click', clickManager);
@@ -166,8 +181,9 @@ function clickManager(event) {
   }
 
   get3RandomProductsAndRender();
-
 }
+
+get3RandomProductsAndRender();
 
 var placeholder0 = document.getElementById('choice-0');
 var placeholder1 = document.getElementById('choice-1');
