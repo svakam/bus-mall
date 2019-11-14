@@ -59,6 +59,12 @@ var randomProduct = function () {
   return Math.floor(Math.random() * productStorage.length);
 };
 
+function updateViews() {
+  displayArray[0].productViews();
+  displayArray[1].productViews();
+  displayArray[2].productViews();
+}
+
 // render 3 images in HTML
 function productView() {
   var placeholder0 = document.getElementById('choice-0');
@@ -67,9 +73,8 @@ function productView() {
   placeholder0.src = displayArray[0].path;
   placeholder1.src = displayArray[1].path;
   placeholder2.src = displayArray[2].path;
-  displayArray[0].productViews();
-  displayArray[1].productViews();
-  displayArray[2].productViews();
+
+  updateViews();
 }
 
 // obtain 3 products and render them to HTML
@@ -136,11 +141,59 @@ function renderTotals(domReferenceResults, productsConsidered) {
 
   for (var storageIndex = 0; storageIndex < productsConsidered.length; storageIndex++) {
     var li = document.createElement('li');
+
     li.textContent = `${productsConsidered[storageIndex].name} had ${productsConsidered[storageIndex].clicked} votes and was shown ${productsConsidered[storageIndex].viewed} times.`;
+
     ul.append(li);
   }
 
   domReferenceResults.append(ul);
+}
+
+function createChart() {
+  // input data into chart variables
+  var productChartArray = [];
+  var votesChartArray = [];
+  var viewsChartArray = [];
+
+  for (var i = 0; i < productsConsidered.length; i++) {
+    productChartArray.push(productsConsidered[i].name);
+    votesChartArray.push(productsConsidered[i].clicked);
+    viewsChartArray.push(productsConsidered[i].viewed);
+  }
+
+  var context = document.getElementById('myChart').getContext('2d');
+  var productChart = new Chart(context, {
+    type: 'bar',
+    data: {
+      labels: productChartArray,
+      datasets: [
+        {
+          label: 'Product Clicks',
+          data: votesChartArray,
+          backgroundColor: 'rgb(255,35,42)',
+          borderColor: 'rgb(255,35,42)',
+        },
+        {
+          label: 'Product Views',
+          data: viewsChartArray,
+          backgroundColor: 'rgb(0,40,255)',
+          borderColor: 'rgb(0,40,255)',
+        }
+      ],
+    },
+    options: {
+      scales: {
+        yAxes: [
+          {
+            ticks: {
+              beginAtZero: true,
+            }
+          },
+        ],
+      }
+    },
+  });
 }
 
 // upon clicking an image, increment clicks and add to considered list only for the clicked product, then reset with 3 new products
@@ -174,6 +227,8 @@ function clickManager(event) {
     placeholder0.removeEventListener('click', clickManager);
     placeholder1.removeEventListener('click', clickManager);
     placeholder2.removeEventListener('click', clickManager);
+
+    createChart();
 
     // show total product clicks vs. views
     var domReferenceResults = document.getElementById('results');
