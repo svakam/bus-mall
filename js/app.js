@@ -1,5 +1,6 @@
 'use strict';
 
+var PRODUCT_DATA = 'productData';
 var productsConsidered = [];
 var productStorage = [];
 var totalClicks = 0;
@@ -19,45 +20,66 @@ function Product(name, path) {
   productStorage.push(this);
 
   // increment clicked vs. viewed products
+  // local storage
   this.productClicks = function () {
     this.clicked++;
-  };
+  }
   this.productViews = function () {
     this.viewed++;
-  };
+  }
 
   // keep track of considered products in an array
   this.addToConsidered = function () {
     productsConsidered.push(this);
-  };
+  }
+
+  // load data from local storage
+  this.loadData = function (data) {
+    this.clicked = data.clicked;
+    this.viewed = data.viewed;
+  }
 }
 
-// declaration of products
-var Bag = new Product('Bag', './img/bag.jpg');
-var Banana = new Product('Banana', './img/banana.jpg');
-var Bathroom = new Product('Bathroom', './img/bathroom.jpg');
-var Boots = new Product('Boots', './img/boots.jpg');
-var Breakfast = new Product('Breakfast', './img/breakfast.jpg');
-var Bubblegum = new Product('Bubblegum', './img/bubblegum.jpg');
-var Chair = new Product('Chair', './img/chair.jpg');
-var Cthulhu = new Product('Cthulhu', './img/cthulhu.jpg');
-var DogDuck = new Product('Dog Duck', './img/dog-duck.jpg');
-var Dragon = new Product('Dragon', './img/dragon.jpg');
-var Pen = new Product('Pen', './img/pen.jpg');
-var PetSweep = new Product('Pet Sweep', './img/pet-sweep.jpg');
-var Scissors = new Product('Scissors', './img/scissors.jpg');
-var Shark = new Product('Shark', './img/shark.jpg');
-var Sweep = new Product('Sweep', './img/sweep.png');
-var Tauntaun = new Product('Tauntaun', './img/tauntaun.jpg');
-var Unicorn = new Product('Unicorn', './img/unicorn.jpg');
-var Usb = new Product('Usb', './img/usb.gif');
-var WaterCan = new Product('Water Can', './img/water-can.jpg');
-var WineGlass = new Product('Wine Glass', './img/wine-glass.jpg');
+// if no local storage, create new products
+if (localStorage.getItem(PRODUCT_DATA) === null) {
+
+  var Bag = new Product('Bag', './img/bag.jpg');
+  var Banana = new Product('Banana', './img/banana.jpg');
+  var Bathroom = new Product('Bathroom', './img/bathroom.jpg');
+  var Boots = new Product('Boots', './img/boots.jpg');
+  var Breakfast = new Product('Breakfast', './img/breakfast.jpg');
+  var Bubblegum = new Product('Bubblegum', './img/bubblegum.jpg');
+  var Chair = new Product('Chair', './img/chair.jpg');
+  var Cthulhu = new Product('Cthulhu', './img/cthulhu.jpg');
+  var DogDuck = new Product('Dog Duck', './img/dog-duck.jpg');
+  var Dragon = new Product('Dragon', './img/dragon.jpg');
+  var Pen = new Product('Pen', './img/pen.jpg');
+  var PetSweep = new Product('Pet Sweep', './img/pet-sweep.jpg');
+  var Scissors = new Product('Scissors', './img/scissors.jpg');
+  var Shark = new Product('Shark', './img/shark.jpg');
+  var Sweep = new Product('Sweep', './img/sweep.png');
+  var Tauntaun = new Product('Tauntaun', './img/tauntaun.jpg');
+  var Unicorn = new Product('Unicorn', './img/unicorn.jpg');
+  var Usb = new Product('Usb', './img/usb.gif');
+  var WaterCan = new Product('Water Can', './img/water-can.jpg');
+  var WineGlass = new Product('Wine Glass', './img/wine-glass.jpg');
+}
+
+else { // else load past data
+  var jsonData = localStorage.getItem(PRODUCT_DATA);
+  var data = JSON.parse(jsonData);
+
+  for (var i = 0; i < data.length; i++) {
+    var newProduct = new Product('', '');
+    newProduct.loadData(data[i]);
+    productStorage.push(newProduct); // fix
+  }
+}
 
 // random product generator
 var randomProduct = function () {
   return Math.floor(Math.random() * productStorage.length);
-};
+}
 
 function updateViews() {
   displayArray[0].productViews();
@@ -228,7 +250,16 @@ function clickManager(event) {
     placeholder1.removeEventListener('click', clickManager);
     placeholder2.removeEventListener('click', clickManager);
 
+    // make chart
     createChart();
+
+    // save to local storage
+    saveProductDataToLocalStorage();
+
+    function saveProductDataToLocalStorage() {
+      var jsonData = JSON.stringify(productStorage);
+      localStorage.setItem(PRODUCT_DATA, jsonData);
+    }
 
     // show total product clicks vs. views
     var domReferenceResults = document.getElementById('results');
