@@ -16,28 +16,25 @@ function Product(name, path) {
   this.clicked = 0;
   this.viewed = 0;
 
-  // push product into a product array to call from
-  productStorage.push(this);
-
   // increment clicked vs. viewed products
   // local storage
   this.productClicks = function () {
     this.clicked++;
-  }
+  };
   this.productViews = function () {
     this.viewed++;
-  }
+  };
 
   // keep track of considered products in an array
   this.addToConsidered = function () {
     productsConsidered.push(this);
-  }
+  };
 
   // load data from local storage
   this.loadData = function (data) {
     this.clicked = data.clicked;
     this.viewed = data.viewed;
-  }
+  };
 }
 
 // if no local storage, create new products
@@ -63,6 +60,26 @@ if (localStorage.getItem(PRODUCT_DATA) === null) {
   var Usb = new Product('Usb', './img/usb.gif');
   var WaterCan = new Product('Water Can', './img/water-can.jpg');
   var WineGlass = new Product('Wine Glass', './img/wine-glass.jpg');
+  productStorage.push(Bag);
+  productStorage.push(Banana);
+  productStorage.push(Bathroom);
+  productStorage.push(Boots);
+  productStorage.push(Breakfast);
+  productStorage.push(Bubblegum);
+  productStorage.push(Chair);
+  productStorage.push(Cthulhu);
+  productStorage.push(DogDuck);
+  productStorage.push(Dragon);
+  productStorage.push(Pen);
+  productStorage.push(PetSweep);
+  productStorage.push(Scissors);
+  productStorage.push(Shark);
+  productStorage.push(Sweep);
+  productStorage.push(Tauntaun);
+  productStorage.push(Unicorn);
+  productStorage.push(Usb);
+  productStorage.push(WaterCan);
+  productStorage.push(WineGlass);
 }
 
 else { // else load past data
@@ -79,7 +96,7 @@ else { // else load past data
 // random product generator
 var randomProduct = function () {
   return Math.floor(Math.random() * productStorage.length);
-}
+};
 
 function updateViews() {
   displayArray[0].productViews();
@@ -253,13 +270,13 @@ function clickManager(event) {
     // make chart
     createChart();
 
-    // save to local storage
-    saveProductDataToLocalStorage();
-
     function saveProductDataToLocalStorage() {
       var jsonData = JSON.stringify(productStorage);
       localStorage.setItem(PRODUCT_DATA, jsonData);
     }
+
+    // save to local storage
+    saveProductDataToLocalStorage();
 
     // show total product clicks vs. views
     var domReferenceResults = document.getElementById('results');
