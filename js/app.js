@@ -34,6 +34,8 @@ function Product(name, path) {
   this.loadData = function (data) {
     this.clicked = data.clicked;
     this.viewed = data.viewed;
+    this.name = data.name;
+    this.path = data.path;
   };
 }
 
@@ -173,7 +175,12 @@ function get3RandomProductsAndRender() {
 // render totals as an unordered list
 function renderTotals(domReferenceResults, productsConsidered) {
   var headerList = document.createElement('h3');
-  headerList.textContent = 'Results';
+  if (localStorage.getItem(PRODUCT_DATA) === null) {
+    headerList.textContent = 'Results';
+  }
+  else {
+    headerList.textContent = 'Since the last refresh, these are the results:';
+  }
   domReferenceResults.append(headerList);
 
   var ul = document.createElement('ul');
@@ -195,10 +202,10 @@ function createChart() {
   var votesChartArray = [];
   var viewsChartArray = [];
 
-  for (var i = 0; i < productsConsidered.length; i++) {
-    productChartArray.push(productsConsidered[i].name);
-    votesChartArray.push(productsConsidered[i].clicked);
-    viewsChartArray.push(productsConsidered[i].viewed);
+  for (var i = 0; i < productStorage.length; i++) {
+    productChartArray.push(productStorage[i].name);
+    votesChartArray.push(productStorage[i].clicked);
+    viewsChartArray.push(productStorage[i].viewed);
   }
 
   var context = document.getElementById('myChart').getContext('2d');
