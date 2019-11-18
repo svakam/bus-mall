@@ -1,7 +1,38 @@
+* {
+    background-color: lightblue;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.headerstuff {
+    display: inline-block;
+}
+
+h1 {
+    width: 80%;
+    position: relative;
+    bottom: 40px;
+}
+
 header > img {
     width: 200px;
+    margin: 0 auto;
+}
+
+.section-inlineblock {
+    display: inline-block;
+    width: 80%;
+    border-style: solid;
+}
+
+#section-results {
+    max-width: 250px;
+}
+
+#choice-field {
+    min-width: 985px;
 }
 
 #choice-field > img {
     max-width: 300px;
+    display: inline-block;
 }

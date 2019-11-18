@@ -175,12 +175,7 @@ function get3RandomProductsAndRender() {
 // render totals as an unordered list
 function renderTotals(domReferenceResults, productsConsidered) {
   var headerList = document.createElement('h3');
-  if (localStorage.getItem(PRODUCT_DATA) === null) {
-    headerList.textContent = 'Results';
-  }
-  else {
-    headerList.textContent = 'Since the last refresh, these are the results:';
-  }
+  headerList.textContent = 'Products shown in this section are only the ones not clicked on previously. If there are no products listed, all products have been clicked on at least once. To view a full list of the products, see the chart below.';
   domReferenceResults.append(headerList);
 
   var ul = document.createElement('ul');
